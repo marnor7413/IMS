@@ -20,7 +20,7 @@ namespace IMS.Plugins.InMemory
 
         public Task AddInventoryAsync(Inventory inventory)
         {
-            if (_inventories.Any(x => 
+            if (_inventories.Any(x =>
                 x.InventoryName.Equals(inventory.InventoryName, StringComparison.OrdinalIgnoreCase)))
             {
                 return Task.CompletedTask;
@@ -29,7 +29,7 @@ namespace IMS.Plugins.InMemory
             var maxId = _inventories.Max(x => x.InventoryId) + 1;
             inventory.InventoryId = maxId;
             _inventories.Add(inventory);
-            
+
             return Task.CompletedTask;
         }
 
@@ -40,6 +40,42 @@ namespace IMS.Plugins.InMemory
 
             return _inventories.Where(x => x.InventoryName
                 .Contains(name, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public async Task<Inventory> GetInventoryByIdAsync(int inventoryId)
+        {
+            var inv = _inventories.First(x => x.InventoryId == inventoryId);
+
+            var newInv = new Inventory
+            {
+                InventoryId = inv.InventoryId,
+                InventoryName = inv.InventoryName,
+                Price = inv.Price,
+                Quantity = inv.Quantity
+            };
+
+            return await Task.FromResult(newInv);
+          
+        }
+
+        public Task UpdateInventoryAsync(Inventory inventory)
+        {
+            if (_inventories.Any(x => 
+                x.InventoryId != inventory.InventoryId && 
+                x.InventoryName.Equals(inventory.InventoryName, StringComparison.OrdinalIgnoreCase)))
+            {
+                return Task.CompletedTask;
+            }
+
+            var inv = _inventories.FirstOrDefault(x => x.InventoryId == inventory.InventoryId);
+            if (inv is not null)
+            {
+                inv.InventoryName = inventory.InventoryName;
+                inv.Price = inventory.Price;
+                inv.Quantity = inventory.Quantity;
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

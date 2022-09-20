@@ -1,0 +1,29 @@
+﻿@inject NavigationManager NavigationManager
+
+@if (Inventories is not null && Inventories.Any())
+{
+    foreach (var inv in Inventories)
+    {
+        <tr>
+            <td>@inv.InventoryName</td>
+            <td>@inv.Quantity</td>
+            <td>$@inv.Price</td>
+            <td>
+                <button 
+                    type="button"
+                    class="btn btn-light"
+                    @onclick="@(() => EditInventory(inv.InventoryId))">Edit</button> <!-- lambdan och kanelbullen behövs för att skicka in parametern i metoden-->
+            </td>
+        </tr>
+    }
+}
+
+@code {
+    [Parameter]
+    public List<Inventory> Inventories { get; set; } = new();
+
+    private void EditInventory(int inventoryId)
+    {
+        NavigationManager.NavigateTo($"/editinventory/{inventoryId}");
+    }
+}
