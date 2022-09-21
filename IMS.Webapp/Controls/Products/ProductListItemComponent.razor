@@ -11,7 +11,9 @@
             <td>
                 <button 
                     type="button"
-                    class="btn btn-light">Edit</button> <!-- lambdan och kanelbullen behövs för att skicka in parametern i metoden-->
+                    class="btn btn-light"
+                    @onclick="@(() => EditProduct(prod))"
+                >Edit</button> <!-- lambdan och kanelbullen behövs för att skicka in parametern i metoden-->
             </td>
         </tr>
     }
@@ -20,5 +22,10 @@
 @code {
     [Parameter]
     public List<Product> Products { get; set; } = new();
-   
+
+    private void EditProduct(Product product)
+    {
+        NavigationManager.NavigateTo($"/editproduct/{product.ProductId}");
+    }
+
 }
