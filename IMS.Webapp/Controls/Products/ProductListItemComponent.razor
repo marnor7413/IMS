@@ -1,0 +1,24 @@
+﻿@inject NavigationManager NavigationManager
+
+@if (Products is not null && Products.Any())
+{
+    foreach (var prod in Products)
+    {
+        <tr>
+            <td>@prod.ProductName</td>
+            <td>@prod.Quantity</td>
+            <td>@prod.Price.ToString("c")</td>
+            <td>
+                <button 
+                    type="button"
+                    class="btn btn-light">Edit</button> <!-- lambdan och kanelbullen behövs för att skicka in parametern i metoden-->
+            </td>
+        </tr>
+    }
+}
+
+@code {
+    [Parameter]
+    public List<Product> Products { get; set; } = new();
+   
+}
