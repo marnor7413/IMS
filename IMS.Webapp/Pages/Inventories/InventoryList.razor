@@ -8,10 +8,11 @@
 <br />
 <InventoryListComponent SearchTerm="@searchTerm"></InventoryListComponent>
 <br />
-<button 
-    type="button"
-    class="btn btn-primary"
-    @onclick="AddInventory">Add Inventory</button>
+<button type="button"
+        class="btn btn-primary"
+        @onclick="AddInventory">
+    Add Inventory
+</button>
 
 @code {
     private string searchTerm = string.Empty;
