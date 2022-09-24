@@ -53,7 +53,7 @@
     {
         await PurchaseInventoryUseCase.ExecuteAsync(
             this.purchaseViewModel.PONumber,
-            this.selectedInventory,
+            this.selectedInventory!,
             this.purchaseViewModel.QuantityToPurchase,
             "Frank"
         );
