@@ -30,9 +30,10 @@ builder.Services.AddTransient<IAddProductUseCase, AddProductUseCase>();
 builder.Services.AddTransient<IViewProductByIdUseCase, ViewProductByIdUseCase>();
 builder.Services.AddTransient<IEditProductUseCase, EditProductUseCase>();
 builder.Services.AddTransient<IProduceProductUseCase, ProduceProductUseCase>();
-;
+
 builder.Services.AddTransient<IPurchaseInventoryUseCase, PurchaseInventoryUseCase>();
 builder.Services.AddTransient<IProduceProductUseCase, ProduceProductUseCase>();
+builder.Services.AddTransient<ISellProductUseCase, SellProductUseCase>();
 
 var app = builder.Build();
 
