@@ -4,10 +4,13 @@
 @inject IViewInventoryByIdUseCase ViewInventoryByIdUseCase
 @inject IPurchaseInventoryUseCase PurchaseInventoryUseCase
 
+@*This import allows triggering of javascript functions to be executed in OnAfterRender method*@
+@inject IJSRuntime JSRuntime
+
 <h3>Purchase Inventory</h3>
 <br />
 
-<EditForm Model="purchaseViewModel" OnValidSubmit="Purchase">
+<EditForm id="purchase-form" Model="purchaseViewModel" OnValidSubmit="Purchase">
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <ValidationSummary></ValidationSummary>
 
@@ -15,9 +18,9 @@
         <label for="po">Purchase Order #</label>
         <InputText id="po" @bind-Value="purchaseViewModel.PONumber" class="form-control"></InputText>
     </div>
-    
+
     <br />
-    
+
     <div class="card">
         <div class="card-body">
             <div class="form-group">
@@ -29,14 +32,15 @@
                 @if (purchaseViewModel.InventoryPrice >= 0 && purchaseViewModel.InventoryId > 0)
                 {
                     <text>Price:</text>
-                    @purchaseViewModel.InventoryPrice.ToString("c");
+                    @purchaseViewModel.InventoryPrice.ToString("c")
+                    ;
                 }
             </div>
         </div>
     </div>
 
     <br />
-    
+
     <div class="form-group">
         <label for="qty">Quantity</label>
         <InputNumber id="qty" @bind-Value="purchaseViewModel.QuantityToPurchase" class="form-control"></InputNumber>
@@ -48,6 +52,15 @@
 @code {
     private PurchaseViewModel purchaseViewModel = new();
     private Inventory? selectedInventory = null;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            JSRuntime.InvokeVoidAsync("PreventFormSubmision", "purchase-form");
+        }
+    }
 
     private async Task Purchase()
     {

@@ -4,9 +4,12 @@
 @inject IViewProductByIdUseCase ViewProductByIdUseCase
 @inject IProduceProductUseCase ProduceProductUseCase
 
+@*This import allows triggering of javascript functions to be executed in OnAfterRender method*@
+@inject IJSRuntime JSRuntime
+
 <h3>Produce Product</h3>
 
-<EditForm Model="produceViewModel" OnValidSubmit="Produce">
+<EditForm id="produce-form" Model="produceViewModel" OnValidSubmit="Produce">
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <ValidationSummary></ValidationSummary>
 
@@ -20,7 +23,7 @@
     <div class="card">
         <div class="card-body">
             <div class="form-group">
-                <AutoCompleteComponent Label="Inventory to Purchase"
+                <AutoCompleteComponent Label="Product to produce"
                                        SearchFunction="SearchProduct"
                                        OnItemSelected="OnItemSelected">
                 </AutoCompleteComponent>
@@ -44,6 +47,15 @@
     private ProduceViewModel produceViewModel = new();
     private Product? selectedProduct = null;
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            JSRuntime.InvokeVoidAsync("PreventFormSubmision", "produce-form");
+        }
+    }
+
     private List<ItemViewModel>? SearchProduct(string name)
     {
         var list = ViewProductsByNameUseCase.ExecuteAsync(name).GetAwaiter().GetResult();
@@ -60,6 +72,7 @@
     {
         this.selectedProduct = await ViewProductByIdUseCase.ExecuteAsync(item.Id);
         produceViewModel.ProductId = item.Id;
+        produceViewModel.Product = this.selectedProduct;
     }
 
     private async Task Produce()
