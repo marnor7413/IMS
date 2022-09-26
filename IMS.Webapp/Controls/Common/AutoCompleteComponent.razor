@@ -17,8 +17,8 @@
                 foreach (var item in searchResults)
                 {
                     <li @key="item.Id"
-                        class="@(itemIndex == currentItemIndex ? "selected" : "")"
-                        @onclick="@(() => OnSelectItem(item))">
+            class="@(itemIndex == currentItemIndex ? "selected" : "")"
+                @onclick="@(() => OnSelectItem(item))">
                         @item.Name
                     </li>
                     itemIndex++;
@@ -34,7 +34,7 @@
     public string Label { get; set; } = string.Empty;
 
     [Parameter]
-    public Func<string, List<ItemViewModel>>? SearchFunction { get; set; }
+    public Func<string, Task<List<ItemViewModel>>>? SearchFunction { get; set; }
 
     [Parameter]
     public EventCallback<ItemViewModel> OnItemSelected { get; set; }
@@ -58,8 +58,7 @@
             {
                 if (this.selectedItem?.Name != _userInput)
                 {
-                    searchResults = SearchFunction(_userInput);
-                    this.selectedItem = null;
+                    ViewItemsAsync();
                 }
             }
             else
@@ -68,6 +67,18 @@
             }
         }
     }
+
+    private async Task ViewItemsAsync()
+    {
+        if (SearchFunction is not null)
+        {
+            searchResults = await SearchFunction(_userInput);
+            this.selectedItem = null;
+
+            StateHasChanged();
+        }
+    }
+
 
     private void ClearCurrentItem()
     {
