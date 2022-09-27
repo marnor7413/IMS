@@ -1,5 +1,6 @@
 ﻿using IMS.CoreBusiness;
 using IMS.UseCases.PluginInterfaces;
+
 namespace IMS.Plugins.InMemory
 {
     public class ProductTransactionRepository : IProductTransactionRepository
@@ -16,6 +17,36 @@ namespace IMS.Plugins.InMemory
             _productRepository = productRepository;
             _inventoryTransactionRepository = inventoryTransactionRepository;
             _inventoryRepository = inventoryRepository;
+        }
+
+        public async Task<IEnumerable<ProductTransaction>> GetProductTransactionAsync(string productName, DateTime? dateFrom, DateTime? dateTo, ProductTransactionType? transactionType)
+        {
+            var product = (await _productRepository.GetProductsByNameAsync(string.Empty)).ToList();
+
+            var query = from it in _productTransactions
+                        join inv in product on it.ProductId equals inv.ProductId
+                        where
+                            (string.IsNullOrWhiteSpace(productName) || inv.ProductName.ToLower().IndexOf(productName.ToLower()) >= 0)
+                            &&
+                            (!dateFrom.HasValue || it.TransactionDate >= dateFrom.Value.Date) &&
+                            (!dateTo.HasValue || it.TransactionDate <= dateTo.Value.Date) &&
+                            (!transactionType.HasValue || it.ActivityType == transactionType)
+                        select new ProductTransaction
+                        {
+                            Product = inv,
+                            ProductTransactionId = it.ProductTransactionId,
+                            SONumber = it.SONumber,
+                            ProductionNumber = it.ProductionNumber,
+                            ProductId = it.ProductId,
+                            QuantityBefore = it.QuantityBefore,
+                            ActivityType = it.ActivityType,
+                            QuantityAfter = it.QuantityAfter,
+                            TransactionDate = it.TransactionDate,
+                            DoneBy = it.DoneBy,
+                            UnitPrice = it.UnitPrice
+                        };
+
+            return query;
         }
 
         public async Task ProduceAsync(string productionNumber, Product product, int quantity, string doneBy)
