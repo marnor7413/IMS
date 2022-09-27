@@ -59,7 +59,7 @@ namespace IMS.Plugins.InMemory
                     if (pi.Inventory is not null)
                     {
                         //add inventory transaction
-                        _inventoryTransactionRepository.ProduceAsync(productionNumber,
+                        await _inventoryTransactionRepository.ProduceAsync(productionNumber,
                         pi.Inventory,
                         pi.InventoryQuantity * quantity,
                         doneBy,
