@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IMS.Plugins\IMS.Plugins.EFCoreSqlServer\IMS.Plugins.EFCoreSqlServer.csproj" />
     <ProjectReference Include="..\IMS.Plugins\IMS.Plugins.InMemory\IMS.Plugins.InMemory.csproj" />
   </ItemGroup>
 
