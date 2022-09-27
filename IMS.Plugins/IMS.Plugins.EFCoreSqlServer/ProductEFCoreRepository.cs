@@ -7,24 +7,26 @@ namespace IMS.Plugins.EFCoreSqlServer
 {
     public class ProductEFCoreRepository : IProductRepository
     {
-        private readonly IMSContext _db;
+        private readonly IDbContextFactory<IMSContext> _contextFactory;
 
-        public ProductEFCoreRepository(IMSContext db)
+        public ProductEFCoreRepository(IDbContextFactory<IMSContext> contextFactory)
         {
-            _db = db;
+            this._contextFactory = contextFactory;
         }
 
         public async Task AddProductAsync(Product product)
         {
+            using var _db = _contextFactory.CreateDbContext();
             _db.Products.Add(product);
-
-            PreserveInventory(product);
+            PreserveInventory(product, _db);
 
             await _db.SaveChangesAsync();
         }
 
         public async Task<Product?> GetProductByIdAsync(int productId)
         {
+            using var _db = _contextFactory.CreateDbContext();
+
             return await _db.Products.Include(x => x.ProductInventories)
                 .ThenInclude(x => x.Inventory)
                 .FirstOrDefaultAsync(x => x.ProductId == productId);
@@ -32,6 +34,8 @@ namespace IMS.Plugins.EFCoreSqlServer
 
         public async Task<IEnumerable<Product>> GetProductsByNameAsync(string name)
         {
+            using var _db = _contextFactory.CreateDbContext();
+
             return await _db.Products.Where(x => 
                 x.ProductName.ToLower()
                 .IndexOf(name.ToLower()) >= 0)
@@ -40,6 +44,7 @@ namespace IMS.Plugins.EFCoreSqlServer
 
         public async Task UpdateProductAsync(Product product)
         {
+            using var _db = _contextFactory.CreateDbContext();
             var prod = await _db.Products
                         .Include(x => x.ProductInventories)
                         .FirstOrDefaultAsync(x => x.ProductId == product.ProductId);
@@ -52,12 +57,12 @@ namespace IMS.Plugins.EFCoreSqlServer
                 prod.ProductInventories = product.ProductInventories;
             }
 
-            PreserveInventory(product);
+            PreserveInventory(product, _db);
 
             await _db.SaveChangesAsync();
         }
 
-        private void PreserveInventory(Product product)
+        private void PreserveInventory(Product product, IMSContext _db)
         {
             if (product?.ProductInventories is not null
                            && product.ProductInventories.Count > 0)

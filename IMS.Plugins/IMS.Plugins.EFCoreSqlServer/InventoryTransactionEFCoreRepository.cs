@@ -1,5 +1,4 @@
 ﻿using IMS.CoreBusiness;
-using IMS.Plugins.EFCoreSqlServer;
 using IMS.UseCases.PluginInterfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,15 +6,16 @@ namespace IMS.Plugins.EFCoreSqlServer
 {
     public class InventoryTransactionEFCoreRepository : IInventoryTransactionRepository
     {
-        private readonly IMSContext _db;
+        private readonly IDbContextFactory<IMSContext> _contextFactory;
 
-        public InventoryTransactionEFCoreRepository(IMSContext db)
+        public InventoryTransactionEFCoreRepository(IDbContextFactory<IMSContext> contextFactory)
         {
-            _db = db;
+            this._contextFactory = contextFactory;
         }
 
         public async Task<IEnumerable<InventoryTransaction>> GetInventoryTransactionAsync(string inventoryName, DateTime? dateFrom, DateTime? dateTo, InventoryTransactionType? transactionType)
         {
+            using var _db = _contextFactory.CreateDbContext();
             var query = from it in _db.InventoryTransactions
                         join inv in _db.Inventories on it.InventoryId equals inv.InventoryId
                         where
@@ -31,6 +31,7 @@ namespace IMS.Plugins.EFCoreSqlServer
 
         public async Task ProduceAsync(string productionNumber, Inventory inventory, int quantityToConsume, string doneBy, double price)
         {
+            using var _db = _contextFactory.CreateDbContext();
             _db.InventoryTransactions.Add(new InventoryTransaction
             {
                 ProductionNumber = productionNumber,
@@ -48,6 +49,7 @@ namespace IMS.Plugins.EFCoreSqlServer
 
         public async Task PurchaseAsync(string poNumber, Inventory inventory, int quantity, string doneBy, double price)
         {
+            using var _db = _contextFactory.CreateDbContext();
             _db.InventoryTransactions.Add(new InventoryTransaction
             {
                 PONumber = poNumber,

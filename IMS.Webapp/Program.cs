@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<IMSContext>(options =>
+builder.Services.AddDbContextFactory<IMSContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("InventoryManagement"));
 });
