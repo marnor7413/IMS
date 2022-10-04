@@ -47,8 +47,21 @@
 
 
 @code {
+    private AuthenticationState? authenticationState;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationStateTask { get; set; }
+
     private SellViewModel sellViewModel = new();
     private Product? selectedProduct = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(authenticationStateTask is not null)
+        {
+            authenticationState = await authenticationStateTask;
+        }
+    }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -82,13 +95,18 @@
 
     private async Task Sell()
     {
-        await SellProductUseCase.ExecuteAsync(
-            this.sellViewModel.SalesOrderNumber,
-            this.sellViewModel.Product!,
-            this.sellViewModel.QuantityToSell,
-            this.sellViewModel.UnitPrice,
-            "Frank"
-        );
+        if (this.selectedProduct is not null
+            && authenticationState is not null
+        && !string.IsNullOrWhiteSpace(authenticationState.User?.Identity?.Name))
+        {
+            await SellProductUseCase.ExecuteAsync(
+              this.sellViewModel.SalesOrderNumber,
+              this.sellViewModel.Product!,
+              this.sellViewModel.QuantityToSell,
+              this.sellViewModel.UnitPrice,
+              authenticationState.User.Identity.Name);
+        }
+        
 
         this.sellViewModel = new();
         this.selectedProduct = null;

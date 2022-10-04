@@ -52,29 +52,31 @@
                     <th>Unit Price</th>
                     <th>SO#</th>
                     <th>Production#</th>
+                    <th>Done by#</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var it in productTransactions)
+                @foreach (var pt in productTransactions)
                 {
                     <tr>
-                        <td>@it.TransactionDate.ToString("MM/dd/yyyy")</td>
-                        <td>@it.Product.ProductName</td>
+                        <td>@pt.TransactionDate.ToString("MM/dd/yyyy")</td>
+                        <td>@pt.Product.ProductName</td>
                         <td>
-                            @if (it.ActivityType == ProductTransactionType.ProduceProduct)
+                            @if (pt.ActivityType == ProductTransactionType.ProduceProduct)
                             {
                                 <text>Produce</text>
                             }
-                            else if (it.ActivityType == ProductTransactionType.SellProduct)
+                            else if (pt.ActivityType == ProductTransactionType.SellProduct)
                             {
                                 <text>Sell</text>
                             }
                         </td>
-                        <td>@it.QuantityBefore</td>
-                        <td>@it.QuantityAfter</td>
-                        <td>@it.UnitPrice?.ToString("c")</td>
-                        <td>@it.SONumber</td>
-                        <td>@it.ProductionNumber</td>
+                        <td>@pt.QuantityBefore</td>
+                        <td>@pt.QuantityAfter</td>
+                        <td>@pt.UnitPrice?.ToString("c")</td>
+                        <td>@pt.SONumber</td>
+                        <td>@pt.ProductionNumber</td>
+                        <td>@pt.DoneBy</td>
                     </tr>
                 }
             </tbody>
