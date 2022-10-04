@@ -17,6 +17,16 @@ using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 var connectionstring = builder.Configuration.GetConnectionString("InventoryManagement");
 
+// configure authorizations
+builder.Services.AddAuthorization(opt =>
+{
+    opt.AddPolicy("Admin", policy => policy.RequireClaim("Department", "Administration"));
+    opt.AddPolicy("Sales", policy => policy.RequireClaim("Department", "Sales"));
+    opt.AddPolicy("Purchasers", policy => policy.RequireClaim("Department", "Purchasing"));
+    opt.AddPolicy("Productions", policy => policy.RequireClaim("Department", "ProductionManagement"));
+    opt.AddPolicy("Inventory", policy => policy.RequireClaim("Department", "InventoryManagement"));
+});
+
 //Configure EF Core for Identity
 builder.Services.AddDbContext<AccountDbContext>(options =>
 {

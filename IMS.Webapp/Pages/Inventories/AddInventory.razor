@@ -2,7 +2,9 @@
 @inject IAddInventoryUseCase AddInventoryUseCase
 @inject NavigationManager NavigationManager
 
-<h3>AddInventory</h3>
+@attribute [Authorize(Policy = "Inventory")]
+
+<h3>Add Inventory</h3>
 <br />
 <EditForm Model="inventory" OnValidSubmit="SaveInventory">
     <DataAnnotationsValidator></DataAnnotationsValidator>

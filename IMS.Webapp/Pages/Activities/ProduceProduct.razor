@@ -7,6 +7,8 @@
 @*This import allows triggering of javascript functions to be executed in OnAfterRender method*@
 @inject IJSRuntime JSRuntime
 
+@attribute [Authorize(Policy ="Productions")]
+
 <h3>Produce Product</h3>
 
 <EditForm id="produce-form" Model="produceViewModel" OnValidSubmit="Produce">

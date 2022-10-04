@@ -2,7 +2,7 @@
 @inject NavigationManager NavigationManager
 @inject IEditInventoryUseCase EditInventoryUseCase
 @inject IViewInventoryByIdUseCase ViewInventoryByIdUseCase
-
+@attribute [Authorize(Policy = "Inventory")]
 <h3>Edit Inventory</h3>
 
 <EditForm Model="inventory" OnValidSubmit="SaveInventory">

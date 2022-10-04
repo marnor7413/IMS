@@ -2,7 +2,7 @@
 @inject IViewProductByIdUseCase ViewProductByIdUseCase
 @inject IEditProductUseCase EditProductUseCase
 @inject NavigationManager NavigationManager
-
+@attribute [Authorize(Policy = "Inventory")]
 <h3>Edit Product</h3>
 <br />
 @if (this.product is not null)

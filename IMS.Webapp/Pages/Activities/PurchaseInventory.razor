@@ -7,6 +7,8 @@
 @*This import allows triggering of javascript functions to be executed in OnAfterRender method*@
 @inject IJSRuntime JSRuntime
 
+@attribute [Authorize(Policy ="Purchasers")]
+
 <h3>Purchase Inventory</h3>
 <br />
 

@@ -5,6 +5,8 @@
 @inject ISellProductUseCase SellProductUseCase
 @inject IJSRuntime IJSRuntime
 
+@attribute [Authorize(Policy = "Sales")]
+
 <h3>Sell Product</h3>
 <br />
 
